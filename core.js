@@ -4,7 +4,7 @@
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   jQuery(function() {
-    var ListView, Question, QuestionList, list_view;
+    var ListView, Question, QuestionList, list_view, question_list;
     Question = (function(_super) {
 
       __extends(Question, _super);
@@ -31,6 +31,13 @@
 
       QuestionList.prototype.model = Question;
 
+      QuestionList.prototype.initialize = function() {
+        return this.bind('all', function(eventType) {
+          console.log("" + eventType + " event occurred! The collection is now:");
+          return console.log(this);
+        });
+      };
+
       return QuestionList;
 
     })(Backbone.Collection);
@@ -46,8 +53,7 @@
 
       ListView.prototype.initialize = function() {
         _.bindAll(this);
-        this.collection = new QuestionList;
-        this.collection.bind('add', this.appendQuestion);
+        question_list.bind('add', this.appendQuestion);
         return this.render();
       };
 
@@ -58,13 +64,10 @@
       };
 
       ListView.prototype.addQuestion = function() {
-        var question;
-        question = new Question;
-        question.set({
+        return question_list.create({
           question: $('#question').val(),
           answer: $('#answer').val()
         });
-        return this.collection.add(question);
       };
 
       ListView.prototype.appendQuestion = function(question) {
@@ -78,6 +81,11 @@
       return ListView;
 
     })(Backbone.View);
+    Backbone.sync = function(method, model) {
+      return console.log(method + ": " + JSON.stringify(model));
+    };
+    question_list = new QuestionList;
+    question_list.fetch();
     return list_view = new ListView;
   });
 
