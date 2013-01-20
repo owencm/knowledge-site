@@ -1,4 +1,4 @@
-knowledge-extension
+knowledge-site
 ===================
 
-A Chrome extension for education
+A website for creating quizes
