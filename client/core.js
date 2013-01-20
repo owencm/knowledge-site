@@ -34,7 +34,7 @@
 
       Questions.prototype.model = Question;
 
-      Questions.prototype.url = 'api/questions';
+      Questions.prototype.url = 'questions';
 
       Questions.prototype.initialize = function() {
         return this.bind('all', function(eventType) {

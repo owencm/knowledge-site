@@ -8,7 +8,7 @@ jQuery ->
 
     class Questions extends Backbone.Collection
         model: Question
-        url: 'api/questions'
+        url: 'questions'
 
         initialize: ->
             @bind 'all', (eventType) -> console.log "#{eventType} event occurred! The collection is now:"; console.log @
