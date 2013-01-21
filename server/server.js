@@ -4,32 +4,30 @@ var models = require('./models');
 var app = express();
 
 function start() {
-
-	models.User.sync(),
-	models.Question.sync()
-
 	app.use(express.bodyParser());
 
 	app.post('/questions', function(req, res){
 		var questionText = req.param('question'); 
 		var answerText = req.param('answer');
 		models.Question
-			.build({question: questionText, answer: answerText})
-			.save()
+			.create({question: questionText, answer: answerText})
 			.success(function(question) {
-				console.log(question.values);
-				res.send(question.values);
+				models.User.find(1).success(function(user) {
+					question.setUser(user).success(function() {
+						res.send(question.values);
+					});
+				});
 			});
 	});
 
 	app.delete('/questions/:id?', function(req, res) {
-		var id = req.params.id;
+		var id = parseInt(req.params.id);
 		// Todo: sanitize
 		models.Question
 				.find(id)
 				.success(function(question) {
-					question.destroy()
-					res.send(question)
+					question.destroy();
+					res.send(question);
 				});
 	});
 

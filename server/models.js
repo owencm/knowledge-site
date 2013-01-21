@@ -7,14 +7,30 @@ var User = db().define('User', {
 	}
 });
 
-var Question = db().define('Question', {
-	question: {
-		type: Sequelize.STRING
+var Question = db().define('Question', 
+	{
+		question: {
+			type: Sequelize.STRING
+		},
+		answer: {
+			type: Sequelize.STRING
+		}
 	},
-	answer: {
-		type: Sequelize.STRING
-	}
+	{
+		instanceMethods: {
+			doSomething: function() { 
+				return "hi";
+			}
+		}
+	});
+
+User.hasMany(Question);
+Question.belongsTo(User);
+
+User.sync().success(function() {
+	Question.sync();
 });
 
-exports.User = User
-exports.Question = Question
+
+exports.User = User;
+exports.Question = Question;
