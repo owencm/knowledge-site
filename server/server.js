@@ -1,32 +1,48 @@
 var express = require('express');
-var db = require('./db')
-var Sequelize = require('sequelize')
+var db = require('./db');
+var Sequelize = require('sequelize');
+var async = require('async');
 var app = express();
 
 function start() {
-	// app.get('/', function(req, res){
-	// 	var body = 'Hello World';
-	// 	res.setHeader('Content-Type', 'text/plain');
-	// 	res.setHeader('Content-Length', body.length);
-	// 	res.end(body);
-	// });
 
 	var User = db().define('User', {
-	  username: {
-	    type: Sequelize.STRING
-	  },
-	  email: {
-	    type: Sequelize.STRING
-	  },
-	  password: {
-	    type: Sequelize.STRING
-	  }
+		username: {
+			type: Sequelize.STRING
+		}
 	});
 
-	console.log(User);
+	var Question = db().define('Question', {
+		question: {
+			type: Sequelize.STRING
+		},
+		answer: {
+			type: Sequelize.STRING
+		}
+	});
+
+	User.sync();
+	Question.sync();
+
+	Question
+		.build({
+			question: "What database are you using?",
+			answer: "MySql"
+		})
+		.save();
+
+	User.build({
+		username: "owencm"
+	}).save()
 
 	app.get('/questions', function(req, res){
-		res.send('[{"question":"How old is Owen Campbell-Moore", "answer":"21"}]');
+		Question.findAll().success(function(questions) {
+			async.map(
+				questions, 
+				function(question, next) { next(null, question.values); }, 
+				function(e, questions) { res.send(questions); } //Success
+				);
+		});
 	});
 
 	var directory = '/Users/owencm/Documents/knowledge-site/' // TODO: factorise me into a config area

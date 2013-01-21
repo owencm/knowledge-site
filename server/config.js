@@ -1,8 +1,8 @@
 exports.databases = {
 	dev: {
-		database: '127.0.0.1/knowledge',
+		database: 'knowledge',
 		username: 'root',
-		password: '',
+		password: 'pass',
 	}
 };
 
