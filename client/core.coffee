@@ -6,6 +6,14 @@ jQuery ->
             question: 'Question'
             answer: 'Answer'
 
+        initialize: ->
+            @bind 'remove', -> @destroy({
+                                          success: (model, response) ->
+                                            console.log "Success removing"
+                                          error: (model, response) ->
+                                            console.log "Error removing"
+                                        })
+
     class Questions extends Backbone.Collection
         model: Question
         url: 'questions'
@@ -19,6 +27,7 @@ jQuery ->
         initialize: ->
             _.bindAll @
             app.questions.bind 'add', @appendQuestion
+            app.questions.bind 'remove', @removeQuestion
             app.questions.bind 'reset', @resetQuestions
             @render()
 
@@ -32,14 +41,26 @@ jQuery ->
                 question: $('#question').val()
                 answer: $('#answer').val()
 
+        removeQuestion: (question) ->
+            $('#question-'+question.get('id')).remove()
+
+        removeClickedQuestionFromModel: (e) ->
+            e.preventDefault()
+            @removeQuestionFromModel app.questions.get(e.toElement.id)
+
+        removeQuestionFromModel: (question) ->
+            app.questions.remove(question)
+
         appendQuestion: (question) ->
-            $('ul').append "<li>#{question.get 'question'}? #{question.get 'answer'}"
+            $('ul').append "<li id='question-#{question.get 'id'}'>#{question.get 'question'}? #{question.get 'answer'} <a href='#' class='remove' id='#{question.get 'id'}'>Remove</a></li>"
 
         resetQuestions: ->
             $('ul').innerHTML = ""
             @appendQuestion question for question in app.questions.models
 
-        events: 'click button': 'addQuestion'
+        events: 
+            'click button': 'addQuestion'
+            'click .remove': 'removeClickedQuestionFromModel'
 
     app.questions = new Questions
     app.questions.fetch()

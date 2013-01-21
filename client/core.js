@@ -21,6 +21,19 @@
         answer: 'Answer'
       };
 
+      Question.prototype.initialize = function() {
+        return this.bind('remove', function() {
+          return this.destroy({
+            success: function(model, response) {
+              return console.log("Success removing");
+            },
+            error: function(model, response) {
+              return console.log("Error removing");
+            }
+          });
+        });
+      };
+
       return Question;
 
     })(Backbone.Model);
@@ -59,6 +72,7 @@
       ListView.prototype.initialize = function() {
         _.bindAll(this);
         app.questions.bind('add', this.appendQuestion);
+        app.questions.bind('remove', this.removeQuestion);
         app.questions.bind('reset', this.resetQuestions);
         return this.render();
       };
@@ -76,8 +90,21 @@
         });
       };
 
+      ListView.prototype.removeQuestion = function(question) {
+        return $('#question-' + question.get('id')).remove();
+      };
+
+      ListView.prototype.removeClickedQuestionFromModel = function(e) {
+        e.preventDefault();
+        return this.removeQuestionFromModel(app.questions.get(e.toElement.id));
+      };
+
+      ListView.prototype.removeQuestionFromModel = function(question) {
+        return app.questions.remove(question);
+      };
+
       ListView.prototype.appendQuestion = function(question) {
-        return $('ul').append("<li>" + (question.get('question')) + "? " + (question.get('answer')));
+        return $('ul').append("<li id='question-" + (question.get('id')) + "'>" + (question.get('question')) + "? " + (question.get('answer')) + " <a href='#' class='remove' id='" + (question.get('id')) + "'>Remove</a></li>");
       };
 
       ListView.prototype.resetQuestions = function() {
@@ -93,7 +120,8 @@
       };
 
       ListView.prototype.events = {
-        'click button': 'addQuestion'
+        'click button': 'addQuestion',
+        'click .remove': 'removeClickedQuestionFromModel'
       };
 
       return ListView;
