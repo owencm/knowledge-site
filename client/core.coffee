@@ -37,9 +37,8 @@ jQuery ->
             $(@el).append '<ul></ul>'
 
         addQuestion: ->
-            app.questions.create 
-                question: $('#question').val()
-                answer: $('#answer').val()
+            app.questions.create { question: $('#question').val(), answer: $('#answer').val() }, {wait: true}
+
 
         removeQuestion: (question) ->
             $('#question-'+question.get('id')).remove()

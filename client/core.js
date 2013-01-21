@@ -87,6 +87,8 @@
         return app.questions.create({
           question: $('#question').val(),
           answer: $('#answer').val()
+        }, {
+          wait: true
         });
       };
 
